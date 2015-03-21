@@ -1,0 +1,71 @@
+---
+title: "Fitness Data Prediction Model"
+author: "superpapper"
+date: "Saturday, March 21, 2015"
+output: html_document
+---
+
+# Executive Summary
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively.The data for this project come from this source:[http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har). Data are collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways, assigned 'classes' A, B, C, D, E in the data set. This report is going to bulid a 'classes' prediction model based on the training set and then predict the classes for the test data set. 
+
+This report use the following libraries:
+
+```{r,warning=FALSE, message=FALSE}
+library(caret)
+library(kernlab)
+library(corrplot)
+library(randomForest)
+library(knitr)
+```
+
+#Data Prcossing
+The training data for this project are available here: 
+[https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv)
+
+The test data are available here: 
+[https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv)
+
+download them to your working directory /data subfolder and read in with read.csv function. Then remove NAs and other identifier columns that are not useful for the model. Finally partition them with 70/30 ratio for model fitting and cross validation. 
+```{r,cache=TRUE}
+#Read in data
+data_training <- read.csv("./data/pml-training.csv", na.strings= c("NA",""," "))
+
+#remove columm contain NAs. and other identifier info not useful for prediction model
+data_training1 <- data_training[,colSums(is.na(data_training))==0]
+data_training2 <- data_training1[8:length(data_training1)]
+
+#Create training and cross validation test set
+set.seed(1000)
+inTrain <- createDataPartition(y = data_training2$classe, p = 0.7, list = FALSE)
+training <- data_training2[inTrain, ]
+crossvalidate <- data_training2[-inTrain, ]
+
+```
+#Create the Model
+We seclect random forest as the model because its high accuracy in fitting models.
+Fit the training data set using all the variables as the predictors with random forest mothod. Model OOB error rate is less than 1% which means this model is pretty accurate
+```{r,cache=TRUE}
+model <- randomForest(classe ~ ., data = training)
+model
+```
+#Cross validation
+Cross validation shows that the model accuracy is 99% which again confirm the accuracy of this model.
+```{r}
+pCrossValidate <- predict(model, crossvalidate)
+confusionMatrix(crossvalidate$classe, pCrossValidate)
+```
+
+#Prediction
+We read in the test data with read.csv, process the data removing NAs and other identifiers and predict the output classes with the model created above and get the final predictions.
+```{r}
+#read in the final test data and predict the class for the 20 inputs
+data_test <- read.csv("./data/pml-testing.csv", na.strings= c("NA",""," "))
+data_test1 <- data_test[,colSums(is.na(data_test))==0]
+data_test2 <- data_test1[8:length(data_test1)]
+predictTest <- predict(model, data_test2)
+predictTest
+```
+
+#Conclusion
+Random forest mothod is used in this report to generate a model to predict exercise manners based on data collected on accelerometers. Model yields high accuracy of 99% with the abundance of data and final prediction based for twenty test set is provided.
+
