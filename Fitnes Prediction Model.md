@@ -8,16 +8,7 @@ output: html_document
 # Executive Summary
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively.The data for this project come from this source:[http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har). Data are collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways, assigned 'classes' A, B, C, D, E in the data set. This report is going to bulid a 'classes' prediction model based on the training set and then predict the classes for the test data set. 
 
-This report use the following libraries:
 
-
-```r
-library(caret)
-library(kernlab)
-library(corrplot)
-library(randomForest)
-library(knitr)
-```
 
 #Data Prcossing
 The training data for this project are available here: 
@@ -44,6 +35,17 @@ crossvalidate <- data_training2[-inTrain, ]
 ```
 #Create the Model
 We seclect random forest as the model because its high accuracy in fitting models.
+However, high correlation between predicting variables will increase error rate.
+We make a correlation matrix plot to take a look the correlations. The dark blue or red pie indicate high correlations. From the figure we see only limited high correlation variables. So we will proceed with using all the variables for prediction.
+
+```r
+# plot a correlation matrix
+M <- cor(training[,-length(training)])
+corrplot(M,type="lower",method="pie",tl.cex=0.7)
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
+
 Fit the training data set using all the variables as the predictors with random forest mothod. Model OOB error rate is less than 1% which means this model is pretty accurate
 
 ```r

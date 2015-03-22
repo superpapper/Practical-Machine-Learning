@@ -8,9 +8,7 @@ output: html_document
 # Executive Summary
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively.The data for this project come from this source:[http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har). Data are collected from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways, assigned 'classes' A, B, C, D, E in the data set. This report is going to bulid a 'classes' prediction model based on the training set and then predict the classes for the test data set. 
 
-This report use the following libraries:
-
-```{r,warning=FALSE, message=FALSE}
+```{r,warning=FALSE, message=FALSE,echo=FALSE}
 library(caret)
 library(kernlab)
 library(corrplot)
