@@ -43,6 +43,14 @@ crossvalidate <- data_training2[-inTrain, ]
 ```
 #Create the Model
 We seclect random forest as the model because its high accuracy in fitting models.
+However, high correlation between predicting variables will increase error rate.
+We make a correlation matrix plot to take a look the correlations. The dark blue or red pie indicate high correlations. From the figure we see only limited high correlation variables. So we will proceed with using all the variables for prediction.
+```{r}
+# plot a correlation matrix
+M <- cor(training[,-length(training)])
+corrplot(M,type="lower",method="pie",tl.cex=0.7)
+```
+
 Fit the training data set using all the variables as the predictors with random forest mothod. Model OOB error rate is less than 1% which means this model is pretty accurate
 ```{r,cache=TRUE}
 model <- randomForest(classe ~ ., data = training)
